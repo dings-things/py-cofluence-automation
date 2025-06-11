@@ -13,9 +13,7 @@ from webhook_sender import WebhookSender, WeeklyReportDTO
 settings = Settings()
 TITLE_FORMAT = "{timestr} 주간 보고"
 TIMESTR_FORMAT = "%Y%m%d"
-CONFLUENCE_BASE_PAGE_URL = (
-    "{settings.CONFLUENCE_BASE_URL}/pages/viewpage.action?pageId={page_id}"
-)
+CONFLUENCE_BASE_PAGE_URL = "{base_url}/pages/viewpage.action?pageId={page_id}"
 
 
 def get_this_week_timestr() -> str:
@@ -89,7 +87,9 @@ try:
             latest_page_id = page.id
 
     if this_week_title_exists:
-        report_link = CONFLUENCE_BASE_PAGE_URL.format(page_id=latest_page_id)
+        report_link = CONFLUENCE_BASE_PAGE_URL.format(
+            base_url=settings.CONFLUENCE_BASE_URL, page_id=latest_page_id
+        )
         logger.info(f"이번 주 목요일 제목이 이미 존재합니다: {report_link}")
         webhook_sender.send_webhook(
             dto=WeeklyReportDTO(report_link=report_link),
@@ -111,7 +111,9 @@ try:
     new_page = content_adder.post(latest_content)
 
     if new_page:
-        report_link = CONFLUENCE_BASE_PAGE_URL.format(page_id=new_page)
+        report_link = CONFLUENCE_BASE_PAGE_URL.format(
+            base_url=settings.CONFLUENCE_BASE_URL, page_id=new_page
+        )
         logger.info(f"새 페이지가 생성되었습니다: {report_link}")
         webhook_sender.send_webhook(
             dto=WeeklyReportDTO(report_link=report_link),
