@@ -16,33 +16,23 @@ TIMESTR_FORMAT = "%Y%m%d"
 CONFLUENCE_BASE_PAGE_URL = "{base_url}/pages/viewpage.action?pageId={page_id}"
 
 
-def get_this_week_timestr() -> str:
-    # 현재 주 목요일 계산
+def get_thursday_of_week(offset_weeks: int = 0) -> str:
+    """
+    현재 주를 기준으로 offset 주 만큼 이동한 목요일 날짜를 반환한다.
+    offset_weeks: 0이면 이번 주, -1이면 저번 주, +1이면 다음 주
+    """
     today = datetime.now()
-    days_since_monday = today.weekday()  # 월요일 기준 (0부터 시작)
-    days_until_thursday = 3 - days_since_monday  # 목요일은 weekday=3
-    this_week_thursday = today + timedelta(days=days_until_thursday)
+    monday = today - timedelta(days=today.weekday())  # 이번 주 월요일
+    target_thursday = monday + timedelta(days=3, weeks=offset_weeks)
+    return TITLE_FORMAT.format(timestr=target_thursday.strftime("%Y%m%d"))
 
-    # 목요일이 지나면 현재 주 목요일을 다시 앞당기기
-    if days_until_thursday < 0:
-        this_week_thursday = today - timedelta(days=days_since_monday - 3)
 
-    thursday_date_str = this_week_thursday.strftime("%Y%m%d")
-
-    # 기존 날짜를 현재 주 목요일 날짜로 교체
-    return TITLE_FORMAT.format(timestr=thursday_date_str)
+def get_this_week_timestr() -> str:
+    return get_thursday_of_week(0)
 
 
 def get_last_week_thursday_title() -> str:
-    today = datetime.now()
-    days_since_monday = today.weekday()  # 0 = 월요일, 3 = 목요일
-    this_week_thursday = today + timedelta(days=(3 - days_since_monday))
-
-    # 저번주 목요일은 현재 주 목요일에서 7일 전
-    last_week_thursday = this_week_thursday - timedelta(days=7)
-    thursday_date_str = last_week_thursday.strftime("%Y%m%d")
-
-    return TITLE_FORMAT.format(timestr=thursday_date_str)
+    return get_thursday_of_week(-1)
 
 
 # 로거 초기화
