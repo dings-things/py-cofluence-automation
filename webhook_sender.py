@@ -4,14 +4,14 @@ from abc import ABC, abstractmethod
 
 
 # to_json을 implement 하는 pydantic 모델 인터페이스 정의
-class WebhookSenderInterface(ABC):
+class WebhookDTOInterface(ABC):
     @abstractmethod
     def to_json(self) -> dict:
         """JSON 형식으로 변환하는 메서드"""
         pass
 
 
-class WeeklyReportDTO(WebhookSenderInterface):
+class WeeklyReportDTO(WebhookDTOInterface):
     def __init__(self, report_link: str):
         self.report_link = report_link
 
@@ -25,7 +25,7 @@ class WebhookSender:
         self.client = WebhookClient(webhook_url)
         self.logger = logger
 
-    def send_webhook(self, dto: WebhookSenderInterface) -> WebhookResponse:
+    def send_webhook(self, dto: WebhookDTOInterface) -> WebhookResponse:
         """웹훅을 보내는 메서드."""
         try:
             # DTO의 데이터를 JSON 문자열로 변환 후 전송
