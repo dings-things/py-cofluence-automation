@@ -14,7 +14,7 @@ settings = Settings()
 TITLE_FORMAT = "{timestr} 주간 보고"
 TIMESTR_FORMAT = "%Y%m%d"
 CONFLUENCE_BASE_PAGE_URL = (
-    "https://confluence.nexon.com/pages/viewpage.action?pageId={page_id}"
+    "{settings.CONFLUENCE_BASE_URL}/pages/viewpage.action?pageId={page_id}"
 )
 
 
